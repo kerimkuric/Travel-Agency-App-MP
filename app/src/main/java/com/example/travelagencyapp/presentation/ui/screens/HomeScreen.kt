@@ -12,14 +12,47 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.travelagencyapp.model.data.TripModel
 import com.example.travelagencyapp.presentation.ui.components.DestinationFilterRow
+import com.example.travelagencyapp.presentation.ui.components.ErrorView
 import com.example.travelagencyapp.presentation.ui.components.FeaturedTripTile
+import com.example.travelagencyapp.presentation.ui.components.LoadingView
+import com.example.travelagencyapp.presentation.viewmodel.home.HomeUiState
+import com.example.travelagencyapp.presentation.viewmodel.home.HomeViewModel
 
 @Composable
 fun HomeScreen(
+    onOpenTrip: (String) -> Unit,
+    onGoTrips: () -> Unit,
+    onGoSearch: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val state = uiState) {
+        HomeUiState.Init, HomeUiState.Loading -> LoadingView(modifier)
+        is HomeUiState.Error -> ErrorView(message = state.message, modifier = modifier)
+        is HomeUiState.Success -> HomeScreenContent(
+            featuredTrips = state.featuredTrips,
+            destinations = state.destinations,
+            selectedDestination = state.selectedDestination,
+            onDestinationSelected = viewModel::onDestinationSelected,
+            onOpenTrip = onOpenTrip,
+            onGoTrips = onGoTrips,
+            onGoSearch = onGoSearch,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+fun HomeScreenContent(
     featuredTrips: List<TripModel>,
     destinations: List<String>,
     selectedDestination: String,
@@ -36,16 +69,14 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Travel Agency", style = MaterialTheme.typography.headlineSmall)
-        Text("Week 5-7 state, lists and navigation")
+        Text("Room database + MVVM")
 
-        // LazyRow #1
         DestinationFilterRow(
             destinations = destinations,
             selected = selectedDestination,
             onSelected = onDestinationSelected,
         )
 
-        // LazyRow #2
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -67,4 +98,3 @@ fun HomeScreen(
         }
     }
 }
-
