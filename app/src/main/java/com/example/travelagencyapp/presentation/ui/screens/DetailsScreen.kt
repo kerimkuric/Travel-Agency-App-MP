@@ -34,7 +34,6 @@ fun DetailsScreen(
         is DetailsUiState.Error -> ErrorView(message = state.message, modifier = modifier)
         is DetailsUiState.Success -> DetailsScreenContent(
             trip = state.trip,
-            source = state.source,
             onBack = onBack,
             onBook = { onBook(state.trip.id, state.source) },
             modifier = modifier,
@@ -45,7 +44,6 @@ fun DetailsScreen(
 @Composable
 fun DetailsScreenContent(
     trip: TripModel,
-    source: String,
     onBack: () -> Unit,
     onBook: () -> Unit,
     modifier: Modifier = Modifier,
@@ -57,7 +55,6 @@ fun DetailsScreenContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Trip details", style = MaterialTheme.typography.headlineSmall)
-        Text("Opened from: $source")
         Text(trip.title, style = MaterialTheme.typography.titleLarge)
         Text("${trip.destination} - ${trip.days} days")
         Text("$${trip.pricePerPerson}/person")

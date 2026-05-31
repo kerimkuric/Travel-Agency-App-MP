@@ -38,7 +38,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = SearchUiState.Loading
             try {
-                tripRepository.ensureSeeded()
+                tripRepository.ensureLocalCatalog()
 
                 combine(
                     tripRepository.observeAllTrips(),

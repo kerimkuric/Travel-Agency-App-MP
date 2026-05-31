@@ -36,7 +36,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
             try {
-                tripRepository.ensureSeeded()
+                tripRepository.ensureLocalCatalog()
                 destinationRepository.ensureSeeded()
 
                 combine(

@@ -69,7 +69,11 @@ fun HomeScreenContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Travel Agency", style = MaterialTheme.typography.headlineSmall)
-        Text("Room database + MVVM")
+        Text(
+            text = "Discover your next adventure",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
 
         DestinationFilterRow(
             destinations = destinations,
@@ -91,10 +95,10 @@ fun HomeScreenContent(
         }
 
         Button(onClick = onGoTrips, modifier = Modifier.fillMaxWidth()) {
-            Text("Open trips list")
+            Text("Browse all trips")
         }
         Button(onClick = onGoSearch, modifier = Modifier.fillMaxWidth()) {
-            Text("Open search")
+            Text("Search trips")
         }
     }
 }

@@ -4,6 +4,8 @@ import com.example.travelagencyapp.model.repository.BookingRepository
 import com.example.travelagencyapp.model.repository.BookingRepositoryImpl
 import com.example.travelagencyapp.model.repository.DestinationRepository
 import com.example.travelagencyapp.model.repository.DestinationRepositoryImpl
+import com.example.travelagencyapp.model.repository.TripNetworkRepository
+import com.example.travelagencyapp.model.repository.TripNetworkRepositoryImpl
 import com.example.travelagencyapp.model.repository.TripRepository
 import com.example.travelagencyapp.model.repository.TripRepositoryImpl
 import dagger.Binds
@@ -19,6 +21,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindTripRepository(impl: TripRepositoryImpl): TripRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTripNetworkRepository(impl: TripNetworkRepositoryImpl): TripNetworkRepository
 
     @Binds
     @Singleton

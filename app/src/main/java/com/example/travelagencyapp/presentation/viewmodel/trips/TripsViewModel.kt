@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.travelagencyapp.model.data.TripModel
 import com.example.travelagencyapp.model.repository.DestinationRepository
+import com.example.travelagencyapp.model.repository.NetworkException
 import com.example.travelagencyapp.model.repository.TripRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -25,30 +26,30 @@ class TripsViewModel @Inject constructor(
     private val selectedDestination = MutableStateFlow("All")
 
     init {
-        load()
+        loadTrips()
+    }
+
+    fun retry() {
+        loadTrips()
     }
 
     fun onDestinationSelected(destination: String) {
         selectedDestination.value = destination
     }
 
-    fun deleteTrip(tripId: String) {
-        viewModelScope.launch {
-            try {
-                tripRepository.deleteTrip(tripId.toLong())
-            } catch (e: Exception) {
-                _uiState.value = TripsUiState.Error(e.message ?: "Failed to delete trip")
-            }
-        }
-    }
-
-    private fun load() {
+    private fun loadTrips() {
         viewModelScope.launch {
             _uiState.value = TripsUiState.Loading
             try {
-                tripRepository.ensureSeeded()
                 destinationRepository.ensureSeeded()
+                tripRepository.syncTripsFromNetwork()
+            } catch (_: NetworkException) {
+                tripRepository.ensureSeeded()
+            } catch (_: Exception) {
+                tripRepository.ensureSeeded()
+            }
 
+            try {
                 combine(
                     tripRepository.observeAllTrips(),
                     destinationRepository.observeDestinationNames(),

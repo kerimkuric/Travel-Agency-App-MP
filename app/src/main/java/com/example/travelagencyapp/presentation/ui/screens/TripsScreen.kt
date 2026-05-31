@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,14 +38,17 @@ fun TripsScreen(
 
     when (val state = uiState) {
         TripsUiState.Init, TripsUiState.Loading -> LoadingView(modifier)
-        is TripsUiState.Error -> ErrorView(message = state.message, modifier = modifier)
+        is TripsUiState.Error -> ErrorView(
+            message = state.message,
+            modifier = modifier,
+            onRetry = viewModel::retry,
+        )
         is TripsUiState.Success -> TripsScreenContent(
             trips = state.trips,
             destinations = state.destinations,
             selectedDestination = state.selectedDestination,
             onDestinationSelected = viewModel::onDestinationSelected,
             onOpenTrip = onOpenTrip,
-            onDeleteTrip = viewModel::deleteTrip,
             onGoHome = onGoHome,
             onGoSearch = onGoSearch,
             modifier = modifier,
@@ -61,7 +63,6 @@ fun TripsScreenContent(
     selectedDestination: String,
     onDestinationSelected: (String) -> Unit,
     onOpenTrip: (String) -> Unit,
-    onDeleteTrip: (String) -> Unit,
     onGoHome: () -> Unit,
     onGoSearch: () -> Unit,
     modifier: Modifier = Modifier,
@@ -72,7 +73,12 @@ fun TripsScreenContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("Trips", style = MaterialTheme.typography.headlineSmall)
+        Text("Our trips", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Browse packages by destination",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         DestinationFilterRow(
             destinations = destinations,
             selected = selectedDestination,
@@ -85,8 +91,8 @@ fun TripsScreenContent(
 
         if (trips.isEmpty()) {
             EmptyState(
-                title = "No items available",
-                message = "No trips match this filter.",
+                title = "No trips found",
+                message = "Try another destination filter.",
             )
         } else {
             LazyColumn(
@@ -94,15 +100,7 @@ fun TripsScreenContent(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 items(trips, key = { it.id }, contentType = { "trip_card" }) { trip ->
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        TripCard(trip = trip, onClick = { onOpenTrip(trip.id) })
-                        OutlinedButton(
-                            onClick = { onDeleteTrip(trip.id) },
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Text("Delete trip")
-                        }
-                    }
+                    TripCard(trip = trip, onClick = { onOpenTrip(trip.id) })
                 }
             }
         }
