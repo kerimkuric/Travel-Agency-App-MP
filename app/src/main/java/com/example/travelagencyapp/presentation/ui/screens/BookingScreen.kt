@@ -34,7 +34,6 @@ fun BookingScreen(
         is BookingUiState.Error -> ErrorView(message = state.message, modifier = modifier)
         is BookingUiState.Success -> BookingScreenContent(
             trip = state.trip,
-            source = state.source,
             bookingName = state.bookingName,
             bookingEmail = state.bookingEmail,
             isFormValid = state.isFormValid,
@@ -54,7 +53,6 @@ fun BookingScreen(
 @Composable
 fun BookingScreenContent(
     trip: TripModel,
-    source: String,
     bookingName: String,
     bookingEmail: String,
     isFormValid: Boolean,
@@ -72,8 +70,7 @@ fun BookingScreenContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text("Booking", style = MaterialTheme.typography.headlineSmall)
-        Text("Opened from: $source")
-        Text("Trip: ${trip.title}")
+        Text(trip.title, style = MaterialTheme.typography.titleMedium)
 
         OutlinedTextField(
             value = bookingName,
